@@ -5,9 +5,11 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("frontend")
 
-add_executable (frontend "main.cpp" )
+add_executable (frontend "main.cpp"  "lexer/lexer.cpp")
 
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_STANDARD_REQUIRED true)
+
+target_compile_options(frontend PRIVATE /std:c++17)
 
 # TODO: Add tests and install targets if needed.
