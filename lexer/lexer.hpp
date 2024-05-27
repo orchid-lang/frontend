@@ -3,6 +3,7 @@
 #include <vector>
 #include <stdexcept>
 #include <format>
+#include <algorithm>
 
 // ' ': 32; '\t': 9; '\n': 10; '\r': 13
 #define SPACE 32
@@ -61,4 +62,6 @@ namespace Orchid::Compiler::Frontend::Lexer {
 	};
 
 	std::vector<Token> getTokens(std::string input);
+
+	std::vector<std::string> KEYWORDS = { "start", "function", "define", "as", "takes", "gives", "let", "make", "return", "print", "end", "if", "typecheck", "then", "catch" };
 }

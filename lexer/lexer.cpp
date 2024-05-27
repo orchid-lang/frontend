@@ -26,6 +26,11 @@ bool is_sep_or_op(char c) {
 	return c == '{' || c == '}' || c == '(' || c == ')' || c == ';' || c == ',' || c == ':';
 }
 
+template<typename T>
+bool vector_has(std::vector<T> vec, T item) {
+	return std::find(vec.begin(), vec.end(), item) != vec.end();
+}
+
 namespace Orchid::Compiler::Frontend::Lexer {
 	Token::Token(TokenType t, const std::string& txt, int ln, int col, int idx)
 		: type(t), text(txt), line(ln), column(col), index(idx) {}
@@ -115,6 +120,23 @@ namespace Orchid::Compiler::Frontend::Lexer {
 				}
 
 				break;	// State::START
+
+			case State::IDENTIFIER:
+				if (is_letter(currentChar) || is_digit(currentChar)) {
+					currentTokenText += currentChar;
+					advance(currentChar);
+				}
+				else {
+					if (vector_has(KEYWORDS, currentTokenText)) {
+						pushToken(TokenType::KEYWORD);
+					}
+					else {
+						pushToken(TokenType::IDENTIFIER);
+					}
+					state = State::START;
+				}
+
+				break;	// State::IDENTIFIER
 			}
 		}
 	}
