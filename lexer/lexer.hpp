@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <stdexcept>
+#include <format>
 
 // ' ': 32; '\t': 9; '\n': 10; '\r': 13
 #define SPACE 32
