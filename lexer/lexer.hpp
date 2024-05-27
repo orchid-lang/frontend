@@ -56,5 +56,5 @@ namespace Orchid::Compiler::Frontend::Lexer {
 
 	std::vector<Token> getTokens(std::string input);
 
-	std::vector<std::string> KEYWORDS = { "start", "function", "define", "as", "takes", "gives", "let", "make", "return", "print", "end", "if", "typecheck", "then", "catch" };
+	inline std::vector<std::string> KEYWORDS = { "start", "function", "define", "as", "takes", "gives", "let", "make", "return", "print", "end", "if", "typecheck", "then", "catch" };
 }

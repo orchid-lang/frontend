@@ -1,4 +1,6 @@
-﻿#include <iostream>
+﻿#include "lexer/lexer.hpp"
+
+#include <iostream>
 #include <string>
 
 /// <summary>
