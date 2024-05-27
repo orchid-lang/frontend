@@ -7,9 +7,9 @@ project ("frontend")
 
 add_executable (frontend "main.cpp"  "lexer/lexer.cpp")
 
-set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_STANDARD_REQUIRED true)
 
-target_compile_options(frontend PRIVATE /std:c++17)
+target_compile_options(frontend PRIVATE /std:c++20)
 
 # TODO: Add tests and install targets if needed.
