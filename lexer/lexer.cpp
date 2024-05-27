@@ -42,7 +42,6 @@ namespace Orchid::Compiler::Frontend::Lexer {
 		int line = 1;
 		int column = 1;
 		int index = 0;
-		TokenType currentTokenType;
 
 		auto pushToken = [&](TokenType type) {
 			foundTokens.push_back(Token(
@@ -110,7 +109,7 @@ namespace Orchid::Compiler::Frontend::Lexer {
 						}
 					}
 					else if (currentChar == '\0') {
-						state == State::DONE;
+						state = State::DONE;
 					}
 					else {
 						throw std::runtime_error(std::format("Unexpected token: {} (ln:{};col:{};idx:{})", std::string(1, currentChar), line, column, index));
@@ -137,7 +136,47 @@ namespace Orchid::Compiler::Frontend::Lexer {
 				}
 
 				break;	// State::IDENTIFIER
+
+			case State::NUMBER:
+				if (is_digit(currentChar)) {
+					currentTokenText += currentChar;
+					advance(currentChar);
+				}
+				else {
+					pushToken(TokenType::NUMERICLITERAL);
+					state = State::START;
+				}
+
+				break;	// State::NUMBER
+
+			case State::STRING:
+				if (currentChar == '"') {
+					currentTokenText += currentChar;
+					pushToken(TokenType::STRINGLITERAL);
+					advance(currentChar);
+					state = State::START;
+				}
+				else {
+					currentTokenText += currentChar;
+					advance(currentChar);
+				}
+				
+				break;	// State::STRING;
+
+			case State::COMMENT:
+				if (currentChar == '\n' || currentChar == '\0') {
+					state = State::START;
+				}
+				else {
+					advance(currentChar);
+				}
+
+				break;	// State::COMMENT
+
+			case State::DONE: break;
 			}
 		}
+
+		return foundTokens;
 	}
 }

@@ -16,18 +16,12 @@ namespace Orchid::Compiler::Frontend::Lexer {
 		KEYWORD,
 		IDENTIFIER,
 		SEPERATOR,
-		LITERAL,
+		STRINGLITERAL,
+		NUMERICLITERAL,
 		COMMENT,
 		WHITESPACE,
 		TYPE,
 		OPERATOR,
-	};
-
-	enum LiteralType {
-		NOTALITERAL,
-		STRINGLITERAL,
-		NUMERICLITERAL,
-		BOOLEANLITERAL,
 	};
 
 	enum TypeType {
@@ -46,13 +40,12 @@ namespace Orchid::Compiler::Frontend::Lexer {
 		int column;
 		int index;
 
-		LiteralType literal_type = LiteralType::NOTALITERAL;
 		TypeType type_type = TypeType::NOTATYPE;
 
 		Token(TokenType t, const std::string& txt, int ln, int col, int idx);
 	};
 
-	enum State {
+	enum class State {
 		START,
 		IDENTIFIER,
 		NUMBER,
