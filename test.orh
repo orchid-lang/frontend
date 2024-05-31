@@ -1,5 +1,11 @@
+start function sparklify takes (string input) gives (string)
+define as {
+	return "✨" + input + "✨";
+} end
+
 start main
 define as {
-	print("Hello, World!");
+	let sparked = sparklify("Hello, World!");
+	print(sparked);
 }
 end
