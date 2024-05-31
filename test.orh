@@ -1,0 +1,5 @@
+start main
+define as {
+	print("Hello, World!");
+}
+end
