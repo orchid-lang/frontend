@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
 	std::cout << "tokens: [\n";
 	for (auto i : tokens)
-		std::cout << "\t{ text: \"" << i.text << "\", type: " << i.type << "},\n";
+		std::cout << "\t{ text: \"" << i.text << "\", type: " << i.type << " },\n";
 	std::cout << "]" << std::endl;
 
 	return 0;
