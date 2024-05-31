@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
 	std::string infile;
 
-	if (argc < 3) {
+	if (argc < 2) {
 		std::cout << "What file to use as input file? ";
 		std::cin >> infile;
 	}
