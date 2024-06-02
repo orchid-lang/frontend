@@ -17,7 +17,7 @@ Contributions are always welcome!
 
 Here is a step-by-step guide on how you can contribute!
 
-1. Read the `CONTRIBUTING` file so you know what you want do is actually something that is wanted or possible.
+1. Read the [`CONTRIBUTING`](CONTRIBUTING.md) file so you know what you want do is actually something that is wanted or possible.
 2. Fork the repo.
 3. Create a new branch. (`git checkout -b feature`)
 4. Make, commit, and push your changes.
