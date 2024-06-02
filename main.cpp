@@ -1,4 +1,5 @@
 ﻿#include "lexer/lexer.hpp"
+#include "parser/parser.hpp"
 
 #include <iostream>
 #include <string>
@@ -46,6 +47,8 @@ int main(int argc, char *argv[])
 	for (auto i : tokens)
 		std::cout << "\t{ text: \"" << i.text << "\", type: " << i.type << " },\n";
 	std::cout << "]" << std::endl;
+
+	auto AST = Orchid::Compiler::Frontend::Parser::generateAST(tokens);
 
 	return 0;
 }

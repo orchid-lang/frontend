@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("frontend")
 
-add_executable (frontend "main.cpp"  "lexer/lexer.cpp")
+add_executable (frontend "main.cpp"  "lexer/lexer.cpp" "parser/parser.cpp")
 
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_STANDARD_REQUIRED true)
