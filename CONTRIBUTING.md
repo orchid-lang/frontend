@@ -18,7 +18,7 @@ The following is a bunch of guidelines to contribute to the compiler frontened. 
 
 ## Code of Conduct
 
-This project and everyone participating in it is overseen by the [Orchid Compiler Frontend Code of Conduct]. By participating you are expected to uphold this code. Please report any unacceptable behaviour to [riley@riley0122.dev](mailto:riley@riley0122.dev).
+This project and everyone participating in it is overseen by the [Orchid Compiler Frontend Code of Conduct](CODE_OF_CONDUCT.md). By participating you are expected to uphold this code. Please report any unacceptable behaviour to [riley@riley0122.dev](mailto:riley@riley0122.dev).
 
 ## How Can I Contribute?
 
