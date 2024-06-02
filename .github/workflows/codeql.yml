@@ -80,6 +80,8 @@ jobs:
     - if: matrix.build-mode == 'manual'
       shell: bash
       run: |
+        sudo apt-get update
+        sudo apt-get install g++-13 -y
         mkdir out
         cd out
         cmake ..
