@@ -17,7 +17,7 @@ jobs:
         run: |
               sudo apt-get update
               sudo apt-get install g++-13
-              sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
+              sudo update-alternatives --install /usr/bin/g++ g++ $(where g++-13 | xargs | cut -d ' ' -f1) 100
               g++ --version
               
       - name: "Create out build files"
