@@ -5,6 +5,8 @@ on:
   push:
     branches: ["master"] 
   workflow_dispatch:
+  
+run-name: "Test project with CTest"
 
 jobs:
   test:
@@ -15,7 +17,7 @@ jobs:
         run: |
               sudo apt-get update
               sudo apt-get install g++-13
-              sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13
+              sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
               g++ --version
               
       - name: "Create out build files"
