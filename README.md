@@ -1,4 +1,7 @@
 # Orchid compiler frontend
+![Lines Of Code Badge](https://raw.githubusercontent.com/orchid-lang/frontend/image-data/cloc_badge.svg)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/orchid-lang/frontend)
 
 This is the compiler frontend for the orchid language.
 
