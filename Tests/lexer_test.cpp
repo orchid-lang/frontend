@@ -2,16 +2,18 @@
 #include <iostream>
 #include <vector>
 
+#define END '\n'
+
 using namespace Orchid::Compiler::Frontend::Lexer;
 
 bool testWhitespace() {
-	std::string input = "	\t\n";
+	std::string input = "	\t\n" + END;
 	auto tokens = getTokens(input);
 	return tokens.empty();
 }
 
 bool testIdentifiers() {
-	std::string input = "foo bar";
+	std::string input = "foo bar" + END;
 	auto tokens = getTokens(input);
 	return (
 		tokens.size() == 2 &&
@@ -21,7 +23,7 @@ bool testIdentifiers() {
 }
 
 bool testNumbers() {
-	std::string input = "123 456 890";
+	std::string input = "123 456 890" + END;
 	auto tokens = getTokens(input);
 	return (
 		tokens.size() == 3 &&
@@ -47,11 +49,11 @@ int main() {
 	for (int i = 0; i < tests.size(); i++)
 	{
 		if (!tests[i]) {
-			std::cout << "\t\t[FAILED] test: " << testNames[i] << std::endl;
+			std::cout << "\t[FAILED] test: " << testNames[i] << std::endl;
 			failed = true;
 		}
 		else {
-			std::cout << "\t\t[PASSED] test: " << testNames[i] << std::endl;
+			std::cout << "\t[PASSED] test: " << testNames[i] << std::endl;
 		}
 	}
 	
