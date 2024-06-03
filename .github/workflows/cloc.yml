@@ -18,7 +18,7 @@ jobs:
         uses: shadowmoose/GHA-LoC-Badge@1.0.0
         with:
           directory: ./
-          badge: ./.github/action_out/cloc_badge.svg
+          badge: ./output/cloc_badge.svg
           patterns: '**/*.cpp|**/*.hpp'
 
       - name: Print the output
