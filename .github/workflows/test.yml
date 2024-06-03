@@ -1,0 +1,33 @@
+name: Test the project
+on:
+  pull_request:
+    branches: ["master"]
+  push:
+    branches: ["master"] 
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: "ubuntu-latest"
+    name: "Run tests"
+    steps:
+      - name: "Setup g++"
+        run: |
+              "sudo apt-get update"
+              "sudo apt-get install g++-13"
+              "sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13"
+              "g++ --version"
+
+      - name: "Create out build files"
+        run: |
+             "mkdir out"
+             "cd out"
+             "cmake .."
+
+      - name: "Build the tests"
+        working-directory: "out"
+        run: "make lexer_tests"
+
+      - name: "Run the tests"
+        working-directory: "out"
+        run: "make test"
