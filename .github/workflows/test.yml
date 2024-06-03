@@ -13,9 +13,9 @@ jobs:
     steps:
       - name: "Setup g++"
         run: |
-              "sudo apt update"
-              "sudo apt install g++-13"
-              "sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13"
+              "apt update"
+              "apt install g++-13"
+              "update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13"
               "g++ --version"
 
       - name: "Create out build files"
