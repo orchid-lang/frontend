@@ -3,6 +3,8 @@ on:
   push:
     branches: ["master"]
 
+permissions: write-all
+
 jobs:
   count:
     name:  "Count lines of code"
