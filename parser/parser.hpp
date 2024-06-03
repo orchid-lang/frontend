@@ -16,6 +16,8 @@ namespace Orchid::Compiler::Frontend::AST {
         NodeType type;
         Orchid::Compiler::Frontend::Lexer::Token token;
         std::vector<Node> subnodes;
+
+        Node(NodeType t, Orchid::Compiler::Frontend::Lexer::Token token, std::vector<Node> subnodes);
     };
 }
 
