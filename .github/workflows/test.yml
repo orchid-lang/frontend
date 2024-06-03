@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-24.04
     name: "Run tests"
     steps:
+      - uses: actions/checkout@v4.1.5
+    
       - name: "Setup g++"
         run: |
               sudo apt-get update
