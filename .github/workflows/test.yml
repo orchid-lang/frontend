@@ -1,6 +1,7 @@
 name: Test the project
 on:
   pull_request:
+  merge_group:
   push:
     branches: [master] 
   workflow_dispatch:
