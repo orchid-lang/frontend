@@ -2,6 +2,12 @@
 #include "../lexer/lexer.hpp"
 
 #include <iostream>
+#include <stdexcept>
+
+template<typename T>
+bool vector_has(std::vector<T> vec, T item) {
+    return std::find(vec.begin(), vec.end(), item) != vec.end();
+}
 
 Orchid::Compiler::Frontend::AST::Node::Node(NodeType t, Orchid::Compiler::Frontend::Lexer::Token token, std::vector<Node> subnodes)
     : type(t), token(token), subnodes(subnodes) {}
@@ -29,8 +35,9 @@ namespace Orchid::Compiler::Frontend::Parser {
         while (*index < (signed)tokens.size()) {
             advance();
 
-            if (current.type == Orchid::Compiler::Frontend::Lexer::TokenType::OPERATOR) {
-                std::cout << current.text;
+            // identifier name can't be keyword name
+            if (current.type == Orchid::Compiler::Frontend::Lexer::TokenType::IDENTIFIER && vector_has(Orchid::Compiler::Frontend::Lexer::KEYWORDS, current.text)) {
+                throw std::runtime_error("Please report this! \nThis error shouldn't be possible! \nReport here: https://github.com/orchid-lang/frontend/issus");
             }
         }
 
