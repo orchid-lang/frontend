@@ -5,6 +5,18 @@
 #include <string>
 #include <fstream>
 
+#if defined(_WIN32)
+#define PLATFORM "win"
+#elif defined(__linux__)
+#define PLATFORM "linux"
+#elif defined(__FreeBSD__)
+#define PLATFORM "freebsd"
+#elif defined(__APPLE__)
+#define PLATFORM "mac"
+#elif defined(__ANDROID__)
+#define PLATFORM "andrd"
+#endif
+
 /// <summary>
 /// Main will only be included in a direct build. 
 /// When included in the full compiler this file will not be added.
@@ -12,6 +24,22 @@
 int main(int argc, char *argv[])
 {
 	std::cout << "[Warning] This is the frontend only build, this is not the full compiler!" << std::endl;
+
+	if (PLATFORM == "win") {
+		std::cout << "(testing file is likely located at \"../../../test.orh\")" << std::endl;
+	}
+	else if (PLATFORM == "linux") {
+		std::cout << "(testing file is likely located at \"../test.orh\")" << std::endl;
+	}
+	else if (PLATFORM == "freebsd" || PLATFORM == "mac") {
+		std::cout << "(How are you even here, you are not in the cmake file)" << std::endl;
+		std::cout << "(testing file is likely located at \"../test.orh\")" << std::endl;
+	}
+	else if (PLATFORM == "andrd") {
+		std::cout << "(How are you even here, you are not in the cmake file)" << std::endl;
+		std::cout << "(I don't even know how you got here on android)" << std::endl;
+		std::cout << "(testing file is likely located at \"../test.orh\")" << std::endl;
+	}
 
 	std::string infile;
 
