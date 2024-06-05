@@ -61,12 +61,22 @@ cd out
 cmake ..
 ```
 
-Then you can build the project with make.
+Then you can build the project to manually test with make.
 ```bash
-make all
+make frontend
 ```
 
-You can view all the make targets with `make help`. However currently that is not utelized for anything
+You can build the tests with 
+```bash
+make lexer_tests
+```
+
+Then run them with
+```bash
+make test
+```
+
+You can view all the make targets if needed with `make help`.
 
 ## License
 
