@@ -38,7 +38,7 @@ namespace Orchid::Compiler::Frontend::Parser {
 
             // identifier name can't be keyword name
             if (current.type == Orchid::Compiler::Frontend::Lexer::TokenType::IDENTIFIER && vector_has(Orchid::Compiler::Frontend::Lexer::KEYWORDS, current.text)) {
-                throw std::runtime_error("Please report this! \nThis error shouldn't be possible! \nReport here: https://github.com/orchid-lang/frontend/issus");
+                throw std::runtime_error("Please report this! \nThis error shouldn't be possible! \nReport here: https://github.com/orchid-lang/frontend/issus \nError code: 302901");
             }
         }
 
