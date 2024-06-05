@@ -1,9 +1,9 @@
 name: Test the project
 on:
   pull_request:
-    branches: ["master"]
+    branches: [master]
   push:
-    branches: ["master"] 
+    branches: [master] 
   workflow_dispatch:
   
 run-name: "Test project with CTest"
