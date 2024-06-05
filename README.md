@@ -1,4 +1,7 @@
 # Orchid compiler frontend
+![Lines Of Code Badge](https://raw.githubusercontent.com/orchid-lang/frontend/image-data/cloc_badge.svg)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/orchid-lang/frontend)
 
 This is the compiler frontend for the orchid language.
 
@@ -58,12 +61,22 @@ cd out
 cmake ..
 ```
 
-Then you can build the project with make.
+Then you can build the project to manually test with make.
 ```bash
-make all
+make frontend
 ```
 
-You can view all the make targets with `make help`. However currently that is not utelized for anything
+You can build the tests with 
+```bash
+make lexer_tests
+```
+
+Then run them with
+```bash
+make test
+```
+
+You can view all the make targets if needed with `make help`.
 
 ## License
 

@@ -1,0 +1,35 @@
+name: Test the project
+on:
+  pull_request:
+  push:
+    branches: [master] 
+  workflow_dispatch:
+  
+run-name: "Test project with CTest"
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    name: "Run tests"
+    steps:
+      - uses: actions/checkout@v4.1.5
+    
+      - name: "Setup g++"
+        run: |
+              sudo apt-get update
+              sudo apt-get install g++-13
+              g++ --version
+              
+      - name: "Create out build files"
+        run: |
+             mkdir out
+             cd out
+             cmake ..
+             
+      - name: "Build the tests"
+        working-directory: out
+        run: make lexer_tests
+
+      - name: "Run the tests"
+        working-directory: out
+        run: make test
