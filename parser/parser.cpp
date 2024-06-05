@@ -10,7 +10,7 @@ namespace Orchid::Compiler::Frontend::Parser {
     Orchid::Compiler::Frontend::AST::Node generateAST(std::vector<Orchid::Compiler::Frontend::Lexer::Token> tokens) {
         Orchid::Compiler::Frontend::Lexer::Token current = tokens[0];
         Orchid::Compiler::Frontend::Lexer::Token lookahead = tokens[0];
-        long long* index = new long long{-1};
+        long long* index = new long long{0};
 
         auto advance = [&]() {
 			current = lookahead;
@@ -18,8 +18,6 @@ namespace Orchid::Compiler::Frontend::Parser {
                 lookahead = tokens[*index];
             }
 		};
-
-        advance();
 
         Orchid::Compiler::Frontend::AST::Node root = Orchid::Compiler::Frontend::AST::Node(
             Orchid::Compiler::Frontend::AST::ROOT,
@@ -29,11 +27,11 @@ namespace Orchid::Compiler::Frontend::Parser {
 
         // Loop over all tokens but skipping the last
         while (*index < (signed)tokens.size()) {
+            advance();
+
             if (current.type == Orchid::Compiler::Frontend::Lexer::TokenType::OPERATOR) {
                 std::cout << current.text;
             }
-
-            advance();
         }
 
         delete index;
