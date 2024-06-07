@@ -47,7 +47,7 @@ namespace Orchid::Compiler::Frontend::Parser {
             {
             case Lexer::KEYWORD:
                 if (current.text == "start") {
-                    if (lookahead.type != Lexer::KEYWORD && lookahead.text != "main") {
+                    if ((lookahead.type != Lexer::KEYWORD || !vector_has({"function", "lambda"}, lookahead.text)) && lookahead.text != "main") {
                         throw std::runtime_error(std::format("Loose 'start' keyword! (ln:{};cl:{},id:{})", current.line, current.column, current.index));
                     } else {
                         Orchid::Compiler::Frontend::AST::Node functionNode(Orchid::Compiler::Frontend::AST::NodeType::OPERATION, current, {});
