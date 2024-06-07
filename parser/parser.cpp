@@ -55,6 +55,7 @@ namespace Orchid::Compiler::Frontend::Parser {
                     }
                 }
 
+                // TODO: fix this
                 if (current.text == "end") {
                     if (currentParent == root) {
                         throw new std::runtime_error(std::format("Cannot end when not in function body! (ln:{};cl:{},id:{})", current.line, current.column, current.index));
