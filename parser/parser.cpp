@@ -61,6 +61,18 @@ namespace Orchid::Compiler::Frontend::Parser {
                         throw new std::runtime_error(std::format("Cannot end when not in function body! (ln:{};cl:{},id:{})", current.line, current.column, current.index));
                     }
                 }
+
+                if (current.text == "define") {
+                    if (lookahead.type != Lexer::KEYWORD || lookahead.text != "as") {
+                        throw std::runtime_error(std::format("'define' needs 'as'! (ln:{};cl:{},id:{})", current.line, current.column, current.index));
+                    }
+                }
+
+                if (current.text == "as") {
+                    if (lookahead.type != Lexer::SEPERATOR || lookahead.text != "{") {
+                        throw std::runtime_error(std::format("expected opening a block with '{}'! (ln:{};cl:{},id:{})", "{", current.line, current.column, current.index));
+                    }
+                }
             case Lexer::IDENTIFIER:
                 // Handle identifiers
                 break;
