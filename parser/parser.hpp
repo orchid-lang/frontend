@@ -22,6 +22,16 @@ namespace Orchid::Compiler::Frontend::AST {
     };
 }
 
+static bool operator ==(Orchid::Compiler::Frontend::AST::Node first, Orchid::Compiler::Frontend::AST::Node second)
+{
+    // Could also just check the token as that is unique
+    // However this is just to be sure.
+    return (
+        first.type == second.type &&
+        first.token == second.token
+    );
+}
+
 namespace Orchid::Compiler::Frontend::Parser {
     Orchid::Compiler::Frontend::AST::Node generateAST(std::vector<Orchid::Compiler::Frontend::Lexer::Token> tokens);
 }
