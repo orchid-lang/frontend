@@ -40,6 +40,31 @@ namespace Orchid::Compiler::Frontend::Parser {
             if (current.type == Orchid::Compiler::Frontend::Lexer::TokenType::IDENTIFIER && vector_has(Orchid::Compiler::Frontend::Lexer::KEYWORDS, current.text)) {
                 throw std::runtime_error("Please report this! \nThis error shouldn't be possible! \nReport here: https://github.com/orchid-lang/frontend/issues \nError code: 302901");
             }
+
+            switch (current.type)
+            {
+            case Lexer::KEYWORD:
+                // Handle keywords
+                break;
+            case Lexer::IDENTIFIER:
+                // Handle identifiers
+                break;
+            case Lexer::SEPERATOR:
+                // Handle seperators
+                break;
+            case Lexer::STRINGLITERAL:
+            case Lexer::NUMERICLITERAL:
+                // Handle literals
+                break;
+            case Lexer::OPERATOR:
+                // Handle operators
+                break;
+            case Lexer::COMMENT:
+            case Lexer::WHITESPACE:
+                break;
+            default:
+                throw std::runtime_error(std::format("Unknown token type for '{}' (ln:{};cl:{},id:{})", current.text, current.line, current.column, current.index));
+            }
         }
 
         delete index;
