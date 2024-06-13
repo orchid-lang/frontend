@@ -34,8 +34,14 @@ namespace Orchid::Compiler::Frontend::Parser {
 
         Orchid::Compiler::Frontend::AST::Node currentParent = root;
 
+        std::vector<AST::Node> parentStack = { root };
+
         // Loop over all tokens but skipping the last
         while (*index < (signed)tokens.size()) {
+            if (parentStack.empty()) {
+                throw std::runtime_error("Please report this! \nroot popped from parent stack!\nReport here: https://github.com/orchid-lang/frontend/issues");
+            }
+
             advance();
 
             // identifier name can't be keyword name
@@ -46,6 +52,7 @@ namespace Orchid::Compiler::Frontend::Parser {
             switch (current.type)
             {
             case Lexer::KEYWORD:
+                // Functions
                 if (current.text == "start") {
                     if ((lookahead.type != Lexer::KEYWORD || !vector_has({"function", "lambda"}, lookahead.text)) && lookahead.text != "main") {
                         throw std::runtime_error(std::format("Loose 'start' keyword! (ln:{};cl:{},id:{})", current.line, current.column, current.index));
@@ -62,6 +69,7 @@ namespace Orchid::Compiler::Frontend::Parser {
                     }
                 }
 
+                // Blocks
                 if (current.text == "define") {
                     if (lookahead.type != Lexer::KEYWORD || lookahead.text != "as") {
                         throw std::runtime_error(std::format("'define' needs 'as'! (ln:{};cl:{},id:{})", current.line, current.column, current.index));
@@ -71,6 +79,13 @@ namespace Orchid::Compiler::Frontend::Parser {
                 if (current.text == "as") {
                     if (lookahead.type != Lexer::SEPERATOR || lookahead.text != "{") {
                         throw std::runtime_error(std::format("expected opening a block with '{}'! (ln:{};cl:{},id:{})", "{", current.line, current.column, current.index));
+                    }
+                }
+
+                // Variables
+                if (current.text == "let" || current.text == "make") {
+                    if (lookahead.type != Lexer::IDENTIFIER) {
+                        throw std::runtime_error(std::format("No identifier found!\nDid you name your variable?\n (ln:{};cl:{},id:{})", current.line, current.column, current.index));
                     }
                 }
             case Lexer::IDENTIFIER:
