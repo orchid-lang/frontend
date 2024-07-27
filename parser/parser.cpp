@@ -13,6 +13,11 @@ bool vector_has(std::vector<T> vec, T item) {
 Orchid::Compiler::Frontend::AST::Node::Node(NodeType t, Orchid::Compiler::Frontend::Lexer::Token token, std::vector<Node> subnodes)
     : type(t), token(token), subnodes(subnodes) {}
 
+Orchid::Compiler::Frontend::AST::Node::Node(NodeType t, Orchid::Compiler::Frontend::Lexer::Token token)
+    : type(t), token(token) {
+    this->subnodes = {};
+}
+
 namespace Orchid::Compiler::Frontend::Parser {
     Orchid::Compiler::Frontend::AST::Node generateAST(std::vector<Orchid::Compiler::Frontend::Lexer::Token> tokens) {
         Orchid::Compiler::Frontend::Lexer::Token current = tokens[0];
@@ -32,15 +37,21 @@ namespace Orchid::Compiler::Frontend::Parser {
             std::vector<Orchid::Compiler::Frontend::AST::Node>()
             );
 
-        Orchid::Compiler::Frontend::AST::Node currentParent = root;
+        Orchid::Compiler::Frontend::AST::Node* currentParent = &root;
 
-        std::vector<AST::Node> parentStack = { root };
+        std::vector<AST::Node*> parentStack = { &root };
 
         // Loop over all tokens but skipping the last
         while (*index < (signed)tokens.size()) {
             if (parentStack.empty()) {
                 throw std::runtime_error("Please report this! \nroot popped from parent stack!\nReport here: https://github.com/orchid-lang/frontend/issues");
             }
+
+            if (!vector_has(parentStack, currentParent)) {
+                throw std::runtime_error("Please report this! \nCurrent parent is not in parent stack!\nReport here: https://github.com/orchid-lang/frontend/issues");
+            }
+            
+            currentParent = parentStack.back();
 
             advance();
 
@@ -57,16 +68,17 @@ namespace Orchid::Compiler::Frontend::Parser {
                     if ((lookahead.type != Lexer::KEYWORD || !vector_has({"function", "lambda"}, lookahead.text)) && lookahead.text != "main") {
                         throw std::runtime_error(std::format("Loose 'start' keyword! (ln:{};cl:{},id:{})", current.line, current.column, current.index));
                     } else {
-                        Orchid::Compiler::Frontend::AST::Node functionNode(Orchid::Compiler::Frontend::AST::NodeType::OPERATION, current, {});
-                        currentParent = functionNode;
+                        Orchid::Compiler::Frontend::AST::Node functionNode(Orchid::Compiler::Frontend::AST::NodeType::OPERATION, current);
+                        parentStack.push_back(&functionNode);
                     }
                 }
 
                 // TODO: fix this
                 if (current.text == "end") {
-                    if (currentParent == root) {
+                    if (*currentParent == root) {
                         throw new std::runtime_error(std::format("Cannot end when not in function body! (ln:{};cl:{},id:{})", current.line, current.column, current.index));
                     }
+                    parentStack.pop_back();
                 }
 
                 // Blocks
@@ -80,6 +92,10 @@ namespace Orchid::Compiler::Frontend::Parser {
                     if (lookahead.type != Lexer::SEPERATOR || lookahead.text != "{") {
                         throw std::runtime_error(std::format("expected opening a block with '{}'! (ln:{};cl:{},id:{})", "{", current.line, current.column, current.index));
                     }
+                    // Create node for code block
+                    Orchid::Compiler::Frontend::AST::Node codeBlock(Orchid::Compiler::Frontend::AST::NodeType::VARIABLE, current);
+                    currentParent->addSubNode(codeBlock);
+                    parentStack.push_back(&codeBlock);
                 }
 
                 // Variables

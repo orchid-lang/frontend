@@ -12,13 +12,24 @@ namespace Orchid::Compiler::Frontend::AST {
         ROOT
     };
 
-    struct Node
+    class Node
     {
+    public:
         NodeType type;
         Orchid::Compiler::Frontend::Lexer::Token token;
-        std::vector<Node> subnodes;
 
         Node(NodeType t, Orchid::Compiler::Frontend::Lexer::Token token, std::vector<Node> subnodes);
+        Node(NodeType t, Orchid::Compiler::Frontend::Lexer::Token token);
+
+        void addSubNode(Node node) {
+            this->subnodes.push_back(node);
+        }
+
+        std::vector<Node> getSubnodes() {
+            return this->subnodes;
+        }
+    private:
+        std::vector<Node> subnodes;
     };
 }
 
