@@ -5,6 +5,37 @@
 #include <string>
 #include <fstream>
 
+void printAST(Orchid::Compiler::Frontend::AST::Node& node, int depth = 0) {
+	std::string indent(depth * 2, ' ');
+
+	std::cout << indent << "{ type: ";
+
+	switch (node.type) {
+	case Orchid::Compiler::Frontend::AST::OPERATION:
+		std::cout << "OPERATION";
+		break;
+	case Orchid::Compiler::Frontend::AST::IDENTIFIER:
+		std::cout << "IDENTIFIER";
+		break;
+	case Orchid::Compiler::Frontend::AST::LITERAL:
+		std::cout << "LITERAL";
+		break;
+	case Orchid::Compiler::Frontend::AST::VARIABLE:
+		std::cout << "VARIABLE";
+		break;
+	case Orchid::Compiler::Frontend::AST::ROOT:
+		std::cout << "ROOT";
+		break;
+	}
+
+	std::cout << ", token: { text: \"" << node.token.text << "\", type: " << node.token.type << " } }" << std::endl;
+
+	// Recursively print subnodes
+	for (auto& subnode : node.getSubnodes()) {
+		printAST(subnode, depth + 1);
+	}
+}
+
 /// <summary>
 /// Main will only be included in a direct build. 
 /// When included in the full compiler this file will not be added.
@@ -49,6 +80,11 @@ int main(int argc, char *argv[])
 	std::cout << "]" << std::endl;
 
 	auto AST = Orchid::Compiler::Frontend::Parser::generateAST(tokens);
+
+	std::cout << AST.getSubnodes().size() << std::endl;
+
+	std::cout << "AST: \n";
+	printAST(AST);
 
 	return 0;
 }
