@@ -57,7 +57,7 @@ namespace Orchid::Compiler::Frontend::Lexer {
 
 	std::vector<Token> getTokens(std::string input);
 
-	inline std::vector<std::string> KEYWORDS = { "start", "function", "define", "as", "takes", "gives", "let", "make", "return", "print", "end", "if", "typecheck", "then", "catch" };
+	inline std::vector<std::string> KEYWORDS = { "start", "function", "define", "as", "takes", "gives", "let", "make", "return", "end", "if", "then", "catch" };
 }
 
 static bool operator ==(Orchid::Compiler::Frontend::Lexer::Token first, Orchid::Compiler::Frontend::Lexer::Token second)
