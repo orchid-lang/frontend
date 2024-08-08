@@ -2,111 +2,141 @@
 #include "parser.hpp"
 #include "../lexer/lexer.hpp"
 
+#include <memory>
 #include <iostream>
 #include <stdexcept>
+#include <format>
+#include <algorithm>
 
 template<typename T>
 bool vector_has(std::vector<T> vec, T item) {
     return std::find(vec.begin(), vec.end(), item) != vec.end();
 }
 
-Orchid::Compiler::Frontend::AST::Node::Node(NodeType t, Orchid::Compiler::Frontend::Lexer::Token token, std::vector<Node> subnodes)
-    : type(t), token(token), subnodes(subnodes) {}
+namespace Orchid::Compiler::Frontend::AST {
+        Node::Node(NodeType t, Orchid::Compiler::Frontend::Lexer::Token token)
+            : type(t), token(token) {}
 
-Orchid::Compiler::Frontend::AST::Node::Node(NodeType t, Orchid::Compiler::Frontend::Lexer::Token token)
-    : type(t), token(token) {
-    this->subnodes = {};
+        Node::Node(NodeType t, Orchid::Compiler::Frontend::Lexer::Token token, std::vector<std::unique_ptr<Node>> subnodes)
+            : type(t), token(token), subnodes(std::move(subnodes)) {}
+
+        void Node::addSubNode(std::unique_ptr<Node> node) {
+            if (!node) {
+                std::cerr << "Warning: Attempt to add a null subnode\n";
+                return;
+            }
+            this->subnodes.push_back(std::move(node));
+        }
+
+        const std::vector<std::unique_ptr<Node>>& Node::getSubnodes() const {
+            return this->subnodes;
+        }
 }
 
 namespace Orchid::Compiler::Frontend::Parser {
-    Orchid::Compiler::Frontend::AST::Node generateAST(std::vector<Orchid::Compiler::Frontend::Lexer::Token> tokens) {
-        Orchid::Compiler::Frontend::Lexer::Token current = tokens[0];
-        Orchid::Compiler::Frontend::Lexer::Token lookahead = tokens[0];
-        long long* index = new long long{0};
+    using NodePtr = std::unique_ptr<Orchid::Compiler::Frontend::AST::Node>;
+
+    NodePtr createNode(Orchid::Compiler::Frontend::AST::NodeType type, Orchid::Compiler::Frontend::Lexer::Token token) {
+        return std::make_unique<Orchid::Compiler::Frontend::AST::Node>(type, token);
+    }
+
+    Orchid::Compiler::Frontend::AST::Node* generateAST(std::vector<Orchid::Compiler::Frontend::Lexer::Token> tokens) {
+        if (tokens.empty()) {
+            throw std::runtime_error("No tokens given!");
+        }
+
+        auto current = tokens.begin();
+        auto lookahead = tokens.begin();
+        long long index = 0;
+
+        bool hasStarted = false;
 
         auto advance = [&]() {
-			current = lookahead;
-            if (++*index < (signed)tokens.size()) {
-                lookahead = tokens[*index];
+            if (lookahead != tokens.end()) {
+                ++lookahead;
+                if (!hasStarted) {
+                    hasStarted = true;
+                    return;
+                }
+                ++current;
             }
 		};
 
-        Orchid::Compiler::Frontend::AST::Node root = Orchid::Compiler::Frontend::AST::Node(
-            Orchid::Compiler::Frontend::AST::ROOT,
-            Orchid::Compiler::Frontend::Lexer::Token(Orchid::Compiler::Frontend::Lexer::TokenType::WHITESPACE, "[ROOT]", -1, -1, -1),
-            std::vector<Orchid::Compiler::Frontend::AST::Node>()
-            );
+        auto root = createNode(Orchid::Compiler::Frontend::AST::NodeType::ROOT,
+                               Orchid::Compiler::Frontend::Lexer::Token(Orchid::Compiler::Frontend::Lexer::TokenType::WHITESPACE, "[ROOT]", -1, -1, -1));
 
-        Orchid::Compiler::Frontend::AST::Node* currentParent = &root;
+        std::vector<Orchid::Compiler::Frontend::AST::Node*> parentStack = { root.get() };
 
-        std::vector<AST::Node*> parentStack = { &root };
-
-        // Loop over all tokens but skipping the last
-        while (*index < (signed)tokens.size()) {
+        while (lookahead != tokens.end()) {
             if (parentStack.empty()) {
                 throw std::runtime_error("Please report this! \nroot popped from parent stack!\nReport here: https://github.com/orchid-lang/frontend/issues");
             }
-
-            if (!vector_has(parentStack, currentParent)) {
-                throw std::runtime_error("Please report this! \nCurrent parent is not in parent stack!\nReport here: https://github.com/orchid-lang/frontend/issues");
-            }
             
-            currentParent = parentStack.back();
-
             advance();
 
             // identifier name can't be keyword name
-            if (current.type == Orchid::Compiler::Frontend::Lexer::TokenType::IDENTIFIER && vector_has(Orchid::Compiler::Frontend::Lexer::KEYWORDS, current.text)) {
+            if (current->type == Orchid::Compiler::Frontend::Lexer::TokenType::IDENTIFIER && vector_has(Orchid::Compiler::Frontend::Lexer::KEYWORDS, current->text)) {
                 throw std::runtime_error("Please report this! \nThis error shouldn't be possible! \nReport here: https://github.com/orchid-lang/frontend/issues");
             }
 
-            switch (current.type)
+            switch (current->type)
             {
             case Lexer::KEYWORD:
                 // Functions
-                if (current.text == "start") {
-                    if ((lookahead.type != Lexer::KEYWORD || !vector_has({"function", "lambda"}, lookahead.text)) && lookahead.text != "main") {
-                        throw std::runtime_error(std::format("Loose 'start' keyword! (ln:{};cl:{},id:{})", current.line, current.column, current.index));
-                    } else {
-                        Orchid::Compiler::Frontend::AST::Node functionNode(Orchid::Compiler::Frontend::AST::NodeType::OPERATION, current);
-                        parentStack.push_back(&functionNode);
+                if (current->text == "start") {
+                    if ((lookahead->type != Lexer::KEYWORD || !vector_has({ "function", "lambda" }, lookahead->text)) && lookahead->text != "main") {
+                        throw std::runtime_error(std::format("Loose 'start' keyword! (ln:{};cl:{},id:{})", current->line, current->column, current->index));
+                    }
+                    else {
+                        auto functionNode = createNode(Orchid::Compiler::Frontend::AST::NodeType::OPERATION, *current);
+                        parentStack.back()->addSubNode(std::move(functionNode));
+                        parentStack.push_back(parentStack.back()->getSubnodes().back().get());
                     }
                 }
 
-                // TODO: fix this
-                if (current.text == "end") {
-                    if (*currentParent == root) {
-                        throw new std::runtime_error(std::format("Cannot end when not in function body! (ln:{};cl:{},id:{})", current.line, current.column, current.index));
+                // TODO: fix this ?
+                if (current->text == "end") {
+                    if (parentStack.back() == root.get()) {
+                        throw new std::runtime_error(std::format("Cannot end when not in function body! (ln:{};cl:{},id:{})", current->line, current->column, current->index));
                     }
+
                     parentStack.pop_back();
+                    if (parentStack.empty()) {
+                        throw std::runtime_error("Parent stack became empty unexpectedly.");
+                    }
                 }
 
                 // Blocks
-                if (current.text == "define") {
-                    if (lookahead.type != Lexer::KEYWORD || lookahead.text != "as") {
-                        throw std::runtime_error(std::format("'define' needs 'as'! (ln:{};cl:{},id:{})", current.line, current.column, current.index));
+                if (current->text == "define") {
+                    if (lookahead->type != Lexer::KEYWORD || lookahead->text != "as") {
+                        throw std::runtime_error(std::format("'define' needs 'as'! (ln:{};cl:{},id:{})", current->line, current->column, current->index));
                     }
                 }
 
-                if (current.text == "as") {
-                    if (lookahead.type != Lexer::SEPERATOR || lookahead.text != "{") {
-                        throw std::runtime_error(std::format("expected opening a block with '{}'! (ln:{};cl:{},id:{})", "{", current.line, current.column, current.index));
+                if (current->text == "as") {
+                    if (lookahead->type != Lexer::SEPERATOR || lookahead->text != "{") {
+                        throw std::runtime_error(std::format("expected opening a block with '{}'! (ln:{};cl:{},id:{})", "{", current->line, current->column, current->index));
                     }
-                    // Create node for code block
-                    Orchid::Compiler::Frontend::AST::Node codeBlock(Orchid::Compiler::Frontend::AST::NodeType::VARIABLE, current);
-                    currentParent->addSubNode(codeBlock);
-                    parentStack.push_back(&codeBlock);
+
+                    auto codeBlock = createNode(Orchid::Compiler::Frontend::AST::NodeType::VARIABLE, *current);
+                    parentStack.back()->addSubNode(std::move(codeBlock));
+                    parentStack.push_back(parentStack.back()->getSubnodes().back().get());
                 }
 
                 // Variables
-                if (current.text == "let" || current.text == "make") {
-                    if (lookahead.type != Lexer::IDENTIFIER) {
-                        throw std::runtime_error(std::format("No identifier found!\nDid you name your variable?\n (ln:{};cl:{},id:{})", current.line, current.column, current.index));
+                if (current->text == "let" || current->text == "make") {
+                    if (lookahead->type != Lexer::IDENTIFIER) {
+                        throw std::runtime_error(std::format("No identifier found!\nDid you name your variable?\n (ln:{};cl:{},id:{})", current->line, current->column, current->index));
                     }
                 }
-            case Lexer::IDENTIFIER:
-                // Handle identifiers
+
                 break;
+            case Lexer::IDENTIFIER:
+            {
+                auto identifierNode = createNode(Orchid::Compiler::Frontend::AST::NodeType::IDENTIFIER, *current);
+                parentStack.back()->addSubNode(std::move(identifierNode));
+                break;
+            }
             case Lexer::SEPERATOR:
                 // Handle seperators
                 break;
@@ -121,12 +151,19 @@ namespace Orchid::Compiler::Frontend::Parser {
             case Lexer::WHITESPACE:
                 break;
             default:
-                throw std::runtime_error(std::format("Unknown token type for '{}' (ln:{};cl:{},id:{})", current.text, current.line, current.column, current.index));
+                throw std::runtime_error(std::format("Unknown token type for '{}' (ln:{};cl:{},id:{})", current->text, current->line, current->column, current->index));
+            }
+
+            if (parentStack.empty()) {
+                throw std::runtime_error("Parent stack became empty unexpectedly.");
             }
         }
 
-        delete index;
+        // Merge parent stack into just root
+        //for (int i = 1; i < parentStack.size(); ++i) {
+        //    root->addSubNode(std::move(std::make_unique<Orchid::Compiler::Frontend::AST::Node>(*parentStack[i])));
+        //}
 
-        return root;
+        return root.release();
     }
 }
