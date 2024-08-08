@@ -1,11 +1,7 @@
-start function sparklify takes (string input) gives (string)
-define as {
-	return "✨" + input + "✨";
-} end
-
 start main
 define as {
-	let sparked = sparklify("Hello, World!");
-	print(sparked);
-}
-end
+	print("Hello, World!");
+} end end
+// TODO: fix parser to automatically end function body when ending code block.
+// RIght now we have end x2 because were ending the function block (start)
+// and the code block (define as)

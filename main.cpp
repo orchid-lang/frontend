@@ -5,6 +5,20 @@
 #include <string>
 #include <fstream>
 
+void printAST(Orchid::Compiler::Frontend::AST::Node& rootNode, int depth = 0) {
+	for (int i = 0; i < depth; ++i) {
+		std::cout << "  ";
+	}
+
+	std::cout << "Node Type: " << static_cast<int>(rootNode.getType())
+		<< ", Token: " << rootNode.getToken().text << "\n";
+
+	const auto& subnodes = rootNode.getSubnodes();
+	for (const auto& subnode : subnodes) {
+		printAST(*subnode, depth + 1);
+	}
+}
+
 /// <summary>
 /// Main will only be included in a direct build. 
 /// When included in the full compiler this file will not be added.
@@ -49,6 +63,9 @@ int main(int argc, char *argv[])
 	std::cout << "]" << std::endl;
 
 	auto AST = Orchid::Compiler::Frontend::Parser::generateAST(tokens);
+
+	std::cout << "AST: ";
+	printAST(*AST);
 
 	return 0;
 }
