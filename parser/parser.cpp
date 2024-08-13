@@ -1,4 +1,3 @@
-// File id: 1 : 00000001; in parser
 #include "parser.hpp"
 #include "../lexer/lexer.hpp"
 
@@ -138,14 +137,14 @@ namespace Orchid::Compiler::Frontend::Parser {
                 break;
             }
             case Lexer::SEPERATOR:
-                // Handle seperators
+                // TODO: Handle seperators
                 break;
             case Lexer::STRINGLITERAL:
             case Lexer::NUMERICLITERAL:
-                // Handle literals
+                // TODO: Handle literals
                 break;
             case Lexer::OPERATOR:
-                // Handle operators
+                // TODO: Handle operators
                 break;
             case Lexer::COMMENT:
             case Lexer::WHITESPACE:
@@ -158,11 +157,6 @@ namespace Orchid::Compiler::Frontend::Parser {
                 throw std::runtime_error("Parent stack became empty unexpectedly.");
             }
         }
-
-        // Merge parent stack into just root
-        //for (int i = 1; i < parentStack.size(); ++i) {
-        //    root->addSubNode(std::move(std::make_unique<Orchid::Compiler::Frontend::AST::Node>(*parentStack[i])));
-        //}
 
         return root.release();
     }
