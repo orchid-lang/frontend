@@ -141,11 +141,26 @@ namespace Orchid::Compiler::Frontend::Parser {
                 break;
             case Lexer::STRINGLITERAL:
             case Lexer::NUMERICLITERAL:
-                // TODO: Handle literals
+            {
+				auto literalNode = createNode(Orchid::Compiler::Frontend::AST::NodeType::LITERAL, *current);
+				parentStack.back()->addSubNode(std::move(literalNode));
                 break;
+			}
             case Lexer::OPERATOR:
-                // TODO: Handle operators
-                break;
+			{
+				// Get the top of the parent stack.
+				auto first = std::move(parentStack.back());
+				parentStack.pop_back();
+
+				// Add the current node to the parent stack
+				auto OperatorNode = createNode(Orchid::Compiler::Frontend::AST::NodeType::OPERATION, *current);
+				// FIXME: idk why this doesn't work, I think I'm just stupid.
+				parentStack.push_back(OperatorNode);
+
+				// add the recent top as our child
+				parentStack.back()->addSubNode(std::make_unique<AST::Node>(first));
+				break;
+			}    
             case Lexer::COMMENT:
             case Lexer::WHITESPACE:
                 break;
